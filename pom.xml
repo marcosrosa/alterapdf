@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.jus.jfes</groupId>
+  <artifactId>alterapdf</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  	<properties>
+  		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <itext.version>7.1.16</itext.version>
+        <itext.pdfsweep.version>2.0.7</itext.pdfsweep.version>
+    </properties>
+    
+    <dependencies>
+        
+       <dependency>
+        	<groupId>com.itextpdf</groupId>
+        	<artifactId>kernel</artifactId>
+        	<version>${itext.version}</version>
+    	</dependency>
+		<!-- always needed -->
+    	<dependency>
+        	<groupId>com.itextpdf</groupId>
+        	<artifactId>io</artifactId>
+        	<version>${itext.version}</version>
+    	</dependency>
+		<!-- always needed -->
+    	<dependency>
+        	<groupId>com.itextpdf</groupId>
+        	<artifactId>layout</artifactId>
+        	<version>${itext.version}</version>
+    	</dependency>
+    	
+    	<dependency>
+    		<groupId>com.itextpdf</groupId>
+    		<artifactId>cleanup</artifactId>
+    		<version>${itext.pdfsweep.version}</version>
+  		</dependency>
+    	
+    </dependencies>
+    
+  
+</project>
