@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -25,6 +26,7 @@ import com.itextpdf.pdfcleanup.autosweep.RegexBasedCleanupStrategy;
 
 public class PDFModifyExample {
 	private static final String src = "/home/marcos/labs/natjus/DAFNE VENTURA MOURA - VU MANTENOPOLIS- FONOAUDIOLOGIA, TERAPIA, PSICOLOGO, FISIOTERAPIA, PEDAGOGO (AGENESIA DE CORPO CALOSO) - 5000141-07.2021.8.08_.pdf";
+	private static final String src0 = "/home/marcos/labs/natjus/CLEUSA DE OLIVEIRA - 2º JUIZADO ESPECIAL CRIMINAL E FAZENDA PÚBLICA DE VITÓRIA – CONSULTA ORTOPÉDICA (GONARTROSE) –  0010319-24.2021.8.08.0024 - PAR.pdf";
 	private static final String src1 = "/home/marcos/labs/natjus/";
 	
 	private static final String dest = "/home/marcos/labs/natjus/alterado3.pdf";
@@ -32,25 +34,6 @@ public class PDFModifyExample {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		/*try {
-			PdfDocument pdf = new PdfDocument(
-				    new PdfReader(src), new PdfWriter(dest));
-			
-			System.out.println("produtor: "+pdf.getDocumentInfo().getProducer());
-			System.out.println("titulo  : "+pdf.getDocumentInfo().getTitle());
-			System.out.println("Subject 	  : "+pdf.getDocumentInfo().getSubject());
-			
-			if (pdf.getDocumentInfo().getTitle()==null) 
-				pdf.getDocumentInfo().setTitle("PARECER");
-			
-			if (pdf.getDocumentInfo().getTitle()!="PARECER" && !pdf.getDocumentInfo().getTitle().isEmpty())
-				pdf.getDocumentInfo().setTitle("ALTERADO-JAVA");
-			
-			pdf.close();
-		    System.out.println("PDF lido successfully.");
-		} catch (Exception e) {
-		    e.printStackTrace();
-		} */
 		
 		//new PDFModifyExample().verificaArquivos();
 		try {
@@ -78,46 +61,31 @@ public class PDFModifyExample {
 	public void verificaArquivos() {
 		
 		File[] filesPdf = listaArquivos();
+		String nome = null;
+		String fn = null;
 		
 	    for (File pdffile : filesPdf) {
-	        System.out.println(pdffile.getName());
-	        System.out.println("");
-	        try {
-				PdfDocument pdf = new PdfDocument(
-					    new PdfReader(pdffile.getAbsoluteFile()), new PdfWriter(dest1+pdffile.getName()));
-				
-				PdfPage page = pdf.getFirstPage();
-		        PdfDictionary dict = page.getPdfObject();
-
-		        PdfObject object = dict.get(PdfName.Contents);
-		        
-		        if (object instanceof PdfStream) {
-		            PdfStream stream = (PdfStream) object;
-		            byte[] data0 = stream.getBytes();
-		            String dd = new String(data0);
-		            System.out.println(dd);
-		            System.out.println("----");
-		            // transformando em texto
-		          /*  PdfDocumentContentParser parser = new PdfDocumentContentParser(pdf);
-		            SimpleTextExtractionStrategy strategy = parser.processContent(1, new SimpleTextExtractionStrategy());
-		            System.out.println(strategy.getResultantText()); */
-		            // modificar
-		            
-		            String replacedData = data0.toString().replace("Dafne", "Paciente9");
-	                //stream.SetData(Encoding.UTF8.GetBytes(replacedData));
-		            
-		            //String replacedData0 = new String(data0).replaceAll("Dafne Ventura Moura", "PACIENTE0");
-		            //String replacedData0 = new String(data0).replaceAll("Dafne", "PACIENTE1");
-		            //String replacedData0 = new String(data0).replace("0 0 0 rg\n()Tj", "0 0 0 rg\n(Plan Advanced Payment)");
-		            //stream.setData(replacedData0.getBytes(StandardCharsets.UTF_8));
-		            //pdf.getWriter().writeBytes(replacedData0.getBytes(StandardCharsets.UTF_8));
-		        }
-		    	pdf.close();
+	    	fn = pdffile.getName();
+	    	int idx = fn.indexOf("-");
+	    	if (idx > 0) { 
+	    		nome = fn.substring(0, idx-1).trim();
+	    		System.out.println(nome);
+	    	} else nome = null;
+	    	if (nome != null) {
+	    		StringTokenizer st = new StringTokenizer(nome);
+	    		 while (st.hasMoreElements()) {
+	    			String elem = st.nextToken();
+	    			System.out.println(elem);
+	    		}
+	    		System.out.println("");
+	    	}
+	    	
+	    	//abre o arquivo contido na pasta e renomeia a saida para qualquer coisa
+			/*PdfDocument pdf = new PdfDocument(
+				    new PdfReader(pdffile.getAbsoluteFile()), new PdfWriter(dest1+pdffile.getName()));
+	        
+	    	pdf.close(); */
 		    	
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
 
 	    } 		
 		
@@ -126,16 +94,21 @@ public class PDFModifyExample {
 	public void retiraNome() throws IOException, InterruptedException {
 
         CompositeCleanupStrategy strategy = new CompositeCleanupStrategy();
-        //strategy.add(new RegexBasedCleanupStrategy("(Dafne)|(DAFNE)"));
-        //strategy.add(new RegexBasedCleanupStrategy("(Moura)|(MOURA)"));
-        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("Dafne", Pattern.CASE_INSENSITIVE)));
-        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("Ventura Moura", Pattern.CASE_INSENSITIVE)));
-        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("Dafne Ventura Moura", Pattern.CASE_INSENSITIVE)));
+        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("\\bDafne\\b", Pattern.CASE_INSENSITIVE)));
+        //strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("(Processo[\w*0031$])", Pattern.CASE_INSENSITIVE))); 
+        //strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("[0-9]{7}-[0-9]{2}.[0-9]{4}.[0-9].[0-9]{2}.[0-9]{4}", Pattern.CASE_INSENSITIVE)));
+        //strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("Proc\\w*....[\\s]{0,5}[\\d]{5,7}-[\\d]{2}.[\\d]{4}.[\\d].[\\d]{2}.[\\d]{4}", Pattern.CASE_INSENSITIVE)));
+        //como colocar ^ na string 
+        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("processo\\s.*\\s[\\d\\.-]*", Pattern.CASE_INSENSITIVE)));
+                
+        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("(Cleusa[\n| ]de[\n| ]Oliveira)", Pattern.CASE_INSENSITIVE)));
+        //strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("(Dafne[\n| ]Ventura[\n| ]Moura)", Pattern.CASE_INSENSITIVE)));
+        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("Dafne\\sVentura\\sMoura", Pattern.CASE_INSENSITIVE)));
+        strategy.add(new RegexBasedCleanupStrategy(Pattern.compile("EQUIPE TÉCNICA NAT/TJES", Pattern.CASE_INSENSITIVE)));
         
-
         PdfWriter writer = new PdfWriter(dest);
         writer.setCompressionLevel(0);
-        PdfDocument pdf = new PdfDocument(new PdfReader(src), writer);
+        PdfDocument pdf = new PdfDocument(new PdfReader(src0), writer);
 
         // sweep
         PdfAutoSweep autoSweep = new PdfAutoSweep(strategy);
