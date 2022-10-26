@@ -6,8 +6,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.itextpdf.kernel.log.SystemOutCounter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -32,11 +34,25 @@ public class PDFModifyExample {
 	private static final String dest = "/home/marcos/labs/natjus/alterado3.pdf";
 	private static final String dest1 = "/home/marcos/labs/natjus/output/";
 
+	private static final String processo = "JFES-eof-2022/00328.01";
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
+		Pattern pattern = Pattern.compile("(EOF|ARP|ADM)[-](\\d{4}[/]\\d{5})", Pattern.CASE_INSENSITIVE);
+		Matcher metcher = pattern.matcher(processo);
+		
+		while (metcher.find() ) {
+			String txtPesq = metcher.group();
+			System.out.println(metcher.start() + " :  " + metcher.end());
+			System.out.println(metcher.group().toUpperCase());
+			/*System.out.println(metcher.group(1).toUpperCase());
+			System.out.println(metcher.group(2));*/
+		}
+
+		
 		//new PDFModifyExample().verificaArquivos();
-		try {
+	/*	try {
 			new PDFModifyExample().retiraNome();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -44,7 +60,7 @@ public class PDFModifyExample {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} */
 	}	
 	
 	private File[] listaArquivos() {
